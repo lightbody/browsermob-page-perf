@@ -1,0 +1,39 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <filter>
+        <filter-name>guiceFilter</filter-name>
+        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>guiceFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--<servlet>-->
+        <!--<servlet-name>dwr-invoker</servlet-name>-->
+        <!--<servlet-class>org.directwebremoting.guice.DwrGuiceServlet</servlet-class>-->
+        <!--<load-on-startup>1</load-on-startup>-->
+    <!--</servlet>-->
+
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>dwr-invoker</servlet-name>-->
+        <!--<url-pattern>/dwr/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <listener>
+        <listener-class>com.browsermob.pageperf.server.guice.PagePerfGuiceServletConfig</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.browsermob.pageperf.server.guice.DwrGuiceServletContextListener</listener-class>
+    </listener>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+</web-app>
