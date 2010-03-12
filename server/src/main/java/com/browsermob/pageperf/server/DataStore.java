@@ -4,10 +4,14 @@ import com.browsermob.pageperf.server.util.SQLUtil;
 import com.browsermob.pageperf.util.IOUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.*;
+import java.text.ParseException;
 
 @Singleton
 public class DataStore {
@@ -30,7 +34,14 @@ public class DataStore {
 
 
 
-    public long save(String testId, long sessionId, Session session) throws SQLException {
+    public long save(String testId, long sessionId, JSONObject json) throws SQLException {
+        Session session;
+        try {
+            session = new Session(json.getJSONObject("log"));
+        } catch (Exception e) {
+            throw new RuntimeException("!", e);
+        }
+
         Connection conn = null;
         try {
             conn = dataSource.getConnection();

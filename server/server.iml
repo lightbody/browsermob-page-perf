@@ -7,13 +7,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="DWR" level="project" />
-    <orderEntry type="module" module-name="common" exported="" />
     <orderEntry type="module" module-name="common" exported="" />
     <orderEntry type="library" exported="" name="Maven: org.mortbay.jetty:jetty:6.1.8" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.mortbay.jetty:jetty-util:6.1.8" level="project" />
@@ -29,6 +26,8 @@
     <orderEntry type="library" exported="" name="Maven: com.google.inject.extensions:guice-servlet:2.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.seleniumhq.selenium2:selenium2-remote-server:2.0a2-r8241" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.json:json:20090211" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.codehaus.jackson:jackson-core-asl:1.4.3" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.4.3" level="project" />
     <orderEntry type="library" exported="" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.8.0" level="project" />

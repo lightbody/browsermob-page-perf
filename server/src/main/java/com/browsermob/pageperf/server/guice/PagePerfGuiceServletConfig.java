@@ -5,7 +5,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import org.directwebremoting.guice.DwrGuiceServlet;
 
 import javax.servlet.ServletContextEvent;
 
@@ -21,8 +20,7 @@ public class PagePerfGuiceServletConfig extends GuiceServletContextListener {
             @Override
             protected void configureServlets() {
                 serve("/har").with(HarServlet.class);
-                serve("/dwr/*").with(DwrGuiceServlet.class);
             }
-        }, new PagePerfModule(), new DwrModule());
+        }, new PagePerfModule());
     }
 }

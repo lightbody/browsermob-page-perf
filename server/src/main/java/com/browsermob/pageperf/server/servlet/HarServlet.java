@@ -5,6 +5,7 @@ import com.browsermob.pageperf.server.Session;
 import com.browsermob.pageperf.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;

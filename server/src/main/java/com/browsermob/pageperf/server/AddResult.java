@@ -1,8 +1,5 @@
 package com.browsermob.pageperf.server;
 
-import org.directwebremoting.annotations.DataTransferObject;
-
-@DataTransferObject
 public class AddResult {
     private int x;
     private int y;

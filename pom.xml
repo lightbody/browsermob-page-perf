@@ -30,6 +30,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:git@github.com:lightbody/browsermob-page-perf.git</connection>
+        <developerConnection>scm:git:git@github.com:lightbody/browsermob-page-perf.git</developerConnection>
+        <url>https://github.com/lightbody/browsermob-page-perf</url>
+    </scm>
     
     <dependencies>
         <dependency>
