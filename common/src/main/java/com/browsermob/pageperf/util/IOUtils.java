@@ -2,12 +2,24 @@ package com.browsermob.pageperf.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class IOUtils {
     private static final int BUFFER = 4096;
+
+    public static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[BUFFER];
+        int length;
+        while ((length = in.read(buffer)) != -1) {
+            out.write(buffer, 0, length);
+        }
+
+        out.close();
+        in.close();
+    }
 
     public static String readFully(InputStream in) throws IOException {
         StringBuilder sb = new StringBuilder();

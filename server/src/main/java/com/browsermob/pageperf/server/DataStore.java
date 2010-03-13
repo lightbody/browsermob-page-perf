@@ -1,25 +1,40 @@
 package com.browsermob.pageperf.server;
 
+import com.browsermob.pageperf.server.util.DataDir;
 import com.browsermob.pageperf.server.util.SQLUtil;
 import com.browsermob.pageperf.util.IOUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.servlet.ServletOutputStream;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.*;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 public class DataStore {
     private DataSource dataSource;
+    private File harDir;
+    private ObjectMapper objectMapper;
 
     @Inject
-    public DataStore(DataSource dataSource) {
+    public DataStore(DataSource dataSource, @DataDir File dataDir, ObjectMapper objectMapper) {
         this.dataSource = dataSource;
+        this.objectMapper = objectMapper;
+        this.harDir = new File(dataDir, "hars");
+        this.harDir.mkdirs();
 
         try {
             Connection conn = dataSource.getConnection();
@@ -32,12 +47,10 @@ public class DataStore {
         }
     }
 
-
-
-    public long save(String testId, long sessionId, JSONObject json) throws SQLException {
+    public long save(String testId, long sessionId, JsonNode json) throws SQLException, IOException {
         Session session;
         try {
-            session = new Session(json.getJSONObject("log"));
+            session = new Session(json.get("log"));
         } catch (Exception e) {
             throw new RuntimeException("!", e);
         }
@@ -103,6 +116,74 @@ public class DataStore {
             SQLUtil.close(conn);
         }
 
+        // now save the har file
+        File harFile = new File(harDir, sessionId + ".har");
+        if (harFile.exists()) {
+            JsonNode original = objectMapper.readValue(harFile, JsonNode.class);
+            json = merge(original, json);
+        }
+
+        objectMapper.writeValue(harFile, json);
+
         return sessionId;
+    }
+
+    private JsonNode merge(JsonNode original, JsonNode json) {
+        ArrayNode an = (ArrayNode) json.get("log").get("pages");
+        an.addAll((ArrayNode) original.get("log").get("pages"));
+
+        an = (ArrayNode) json.get("log").get("entries");
+        an.addAll((ArrayNode) original.get("log").get("entries"));
+        
+        return json;
+    }
+
+    public void writeSessionHar(long sessionId, ServletOutputStream outputStream) throws IOException {
+        IOUtils.copy(new FileInputStream(new File(harDir, sessionId + ".har")), outputStream);
+    }
+
+    public List<String> getKnownTests() {
+        ArrayList<String> ids = new ArrayList<String>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = dataSource.getConnection();
+            ps = conn.prepareStatement("SELECT DISTINCT test_id FROM session");
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                ids.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            SQLUtil.close(conn, ps, rs);
+        }
+
+        return ids;
+    }
+
+    public List<SessionQueryResult> querySession(String testId) {
+        List<SessionQueryResult> results = new ArrayList<SessionQueryResult>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = dataSource.getConnection();
+            ps = conn.prepareStatement("SELECT session_id, time_active FROM session WHERE test_id = ?");
+            ps.setString(1, testId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                results.add(new SessionQueryResult(rs.getLong(1), rs.getLong(2)));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            SQLUtil.close(conn, ps, rs);
+        }
+
+        return results;
     }
 }

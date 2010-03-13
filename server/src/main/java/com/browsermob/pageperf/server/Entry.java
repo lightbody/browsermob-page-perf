@@ -2,8 +2,8 @@ package com.browsermob.pageperf.server;
 
 import com.browsermob.pageperf.server.util.DateParser;
 import com.browsermob.pageperf.util.IOUtils;
+import org.codehaus.jackson.JsonNode;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,14 +30,14 @@ public class Entry {
     private long waitTime;
     private long receiveTime;
 
-    public Entry(JSONObject json) throws ParseException, JSONException, MalformedURLException {
-        start = DateParser.parse(json.getString("startedDateTime"));
-        timeActive = json.getLong("time");
+    public Entry(JsonNode json) throws ParseException, JSONException, MalformedURLException {
+        start = DateParser.parse(json.get("startedDateTime").getTextValue());
+        timeActive = json.get("time").getLongValue();
         end = new Date(start.getTime() + timeActive);
 
-        JSONObject req = json.getJSONObject("request");
-        method = req.getString("method");
-        url = req.getString("url");
+        JsonNode req = json.get("request");
+        method = req.get("method").getTextValue();
+        url = req.get("url").getTextValue();
         URL urlObj = new URL(url);
         protocol = urlObj.getProtocol();
         host = urlObj.getHost();
@@ -51,17 +51,17 @@ public class Entry {
             partialUrlMd5 = "error_computing";
         }
 
-        JSONObject res = json.getJSONObject("response");
-        statusCode = res.getInt("status");
-        bytes = res.getInt("bodySize");
+        JsonNode res = json.get("response");
+        statusCode = res.get("status").getIntValue();
+        bytes = res.get("bodySize").getIntValue();
 
-        JSONObject timings = json.getJSONObject("timings");
-        dnsLookupTime = timings.getLong("dns");
-        connectTime = timings.getLong("connect");
-        blockedTime = timings.getLong("blocked");
-        sendTime = timings.getLong("send");
-        waitTime = timings.getLong("wait");
-        receiveTime = timings.getLong("receive");
+        JsonNode timings = json.get("timings");
+        dnsLookupTime = timings.get("dns").getLongValue();
+        connectTime = timings.get("connect").getLongValue();
+        blockedTime = timings.get("blocked").getLongValue();
+        sendTime = timings.get("send").getLongValue();
+        waitTime = timings.get("wait").getLongValue();
+        receiveTime = timings.get("receive").getLongValue();
     }
 
     public String getMethod() {

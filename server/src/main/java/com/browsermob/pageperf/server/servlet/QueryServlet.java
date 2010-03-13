@@ -14,17 +14,29 @@ import java.io.IOException;
 @Singleton
 public class QueryServlet extends HttpServlet {
     private DataStore dataStore;
+    private ObjectMapper objectMapper;
 
     @Inject
-    public QueryServlet(DataStore dataStore) {
+    public QueryServlet(DataStore dataStore, ObjectMapper objectMapper) {
         this.dataStore = dataStore;
+        this.objectMapper = objectMapper;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-//        User user = mapper.readValue(new File("user.json"), User.class);
+        String testId = req.getParameter("testId");
+        QueryType type = QueryType.valueOf(req.getParameter("type"));
 
-        super.doGet(req, resp);
+        Object ret = null;
+
+        switch (type) {
+            case SESSION:
+                ret = dataStore.querySession(testId);
+                break;
+            default:
+                throw new RuntimeException("Ack!");
+        }
+
+        objectMapper.writeValue(resp.getOutputStream(), ret);
     }
 }

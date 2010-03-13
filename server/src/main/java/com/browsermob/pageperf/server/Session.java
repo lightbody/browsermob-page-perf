@@ -1,14 +1,16 @@
 package com.browsermob.pageperf.server;
 
-import org.json.JSONArray;
+import org.codehaus.jackson.JsonNode;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Session {
     private Date start;
@@ -16,20 +18,16 @@ public class Session {
     private int objectCount;
     private Map<String, Page> pages = new HashMap<String, Page>();
 
-    public Session(JSONObject json) throws JSONException, ParseException, MalformedURLException {
+    public Session(JsonNode json) throws JSONException, ParseException, MalformedURLException {
         // pages
-        JSONArray pages = json.getJSONArray("pages");
-        for (int i = 0; i < pages.length(); i++) {
-            JSONObject pageJson = pages.getJSONObject(i);
-            String ref = pageJson.getString("id");
+        for (JsonNode pageJson : json.get("pages")) {
+            String ref = pageJson.get("id").getTextValue();
             this.pages.put(ref, new Page(pageJson));
         }
 
         // entries
-        JSONArray entries = json.getJSONArray("entries");
-        for (int i = 0; i < entries.length(); i++) {
-            JSONObject entryJson = entries.getJSONObject(i);
-            String ref = entryJson.getString("pageref");
+        for (JsonNode entryJson : json.get("entries")) {
+            String ref = entryJson.get("pageref").getTextValue();
             this.pages.get(ref).addEntry(new Entry(entryJson));
         }
 

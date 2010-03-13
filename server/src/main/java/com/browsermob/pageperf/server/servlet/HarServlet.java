@@ -1,14 +1,11 @@
 package com.browsermob.pageperf.server.servlet;
 
 import com.browsermob.pageperf.server.DataStore;
-import com.browsermob.pageperf.server.Session;
 import com.browsermob.pageperf.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -16,9 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.SQLException;
-import java.text.ParseException;
 
 @Singleton
 public class HarServlet extends HttpServlet {
@@ -29,6 +23,19 @@ public class HarServlet extends HttpServlet {
     @Inject
     public HarServlet(DataStore dataStore) {
         this.dataStore = dataStore;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String pathInfo = req.getPathInfo();
+        if (pathInfo == null || req.getPathInfo().equals("/")) {
+            resp.sendError(500, "GET must include session ID");
+            return;
+        }
+
+        long sessionId = Long.parseLong(pathInfo.substring(1));
+
+        dataStore.writeSessionHar(sessionId, resp.getOutputStream());
     }
 
     @Override
@@ -52,7 +59,8 @@ public class HarServlet extends HttpServlet {
 
         try {
 
-            JSONObject json = new JSONObject(new JSONTokener(new InputStreamReader(req.getInputStream())));
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode json = mapper.readValue(req.getInputStream(), JsonNode.class);
 
             sessionId = dataStore.save(testId, sessionId, json);
         } catch (Exception e) {

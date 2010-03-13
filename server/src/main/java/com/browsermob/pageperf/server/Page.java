@@ -1,8 +1,8 @@
 package com.browsermob.pageperf.server;
 
 import com.browsermob.pageperf.server.util.DateParser;
+import org.codehaus.jackson.JsonNode;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ public class Page {
     private int bytes;
     private List<Entry> entries = new ArrayList<Entry>();
 
-    public Page(JSONObject json) throws JSONException, ParseException {
-        title = json.getString("title");
-        start = DateParser.parse(json.getString("startedDateTime"));
-        JSONObject pageTimings = json.getJSONObject("pageTimings");
-        onContentLoad = pageTimings.getLong("onContentLoad");
-        onLoad = pageTimings.getLong("onLoad");
+    public Page(JsonNode json) throws JSONException, ParseException {
+        title = json.get("title").getTextValue();
+        start = DateParser.parse(json.get("startedDateTime").getTextValue());
+        JsonNode pageTimings = json.get("pageTimings");
+        onContentLoad = pageTimings.get("onContentLoad").getLongValue();
+        onLoad = pageTimings.get("onLoad").getLongValue();
     }
 
     public void addEntry(Entry entry) {

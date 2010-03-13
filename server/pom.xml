@@ -13,6 +13,7 @@
     <groupId>com.browsermob.pageperf</groupId>
     <artifactId>server</artifactId>
     <name>BrowserMob PagePerf Server</name>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>

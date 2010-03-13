@@ -1,1 +1,3 @@
-hello!
+<%
+    response.sendRedirect("/tests");
+%>

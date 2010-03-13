@@ -13,23 +13,8 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!--<servlet>-->
-        <!--<servlet-name>dwr-invoker</servlet-name>-->
-        <!--<servlet-class>org.directwebremoting.guice.DwrGuiceServlet</servlet-class>-->
-        <!--<load-on-startup>1</load-on-startup>-->
-    <!--</servlet>-->
-
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>dwr-invoker</servlet-name>-->
-        <!--<url-pattern>/dwr/*</url-pattern>-->
-    <!--</servlet-mapping>-->
-
     <listener>
         <listener-class>com.browsermob.pageperf.server.guice.PagePerfGuiceServletConfig</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>com.browsermob.pageperf.server.guice.DwrGuiceServletContextListener</listener-class>
     </listener>
 
     <welcome-file-list>

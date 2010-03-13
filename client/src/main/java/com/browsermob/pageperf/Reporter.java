@@ -5,6 +5,7 @@ import com.browsermob.pageperf.util.Log;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -19,7 +20,7 @@ public class Reporter {
     private static final Log LOG = new Log();
 
     public static void main(String[] args) {
-        process("foo", new File("/Users/plightbo/Desktop/Blah"));
+        process("foo", new File("client/test-data"));
     }
 
     static void process(String testId, File dir) {
@@ -45,30 +46,9 @@ public class Reporter {
         for (File file : files) {
             LOG.info("Processing %s", file);
             
-            FileReader reader;
-            try {
-                reader = new FileReader(file);
-            } catch (FileNotFoundException e) {
-                LOG.severe("File not found, even though we just listed %s", e, file);
-                continue;
-            }
-
-            JSONObject json;
-            try {
-                json = new JSONObject(new JSONTokener(reader));
-            } catch (JSONException e) {
-                LOG.severe("Could not parse %s", e, file);
-                continue;
-            }
-
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://localhost:8080/har?testId=" + testId + "&sessionId=" + sessionId);
-            try {
-                post.setEntity(new StringEntity(json.toString()));
-            } catch (UnsupportedEncodingException e) {
-                LOG.severe("Unsupported encoding shouldn't happen, but it is for file %s", e, file);
-                continue;
-            }
+            post.setEntity(new FileEntity(file, "text/json"));
 
             try {
                 HttpResponse res = client.execute(post);
