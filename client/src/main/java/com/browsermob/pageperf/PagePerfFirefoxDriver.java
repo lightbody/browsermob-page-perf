@@ -11,14 +11,16 @@ import java.io.IOException;
 public class PagePerfFirefoxDriver extends FirefoxDriver {
     private FirefoxProfile profile;
     private String testId;
+    private String pagePerfServer;
 
-    public PagePerfFirefoxDriver(String testId) {
-        this(testId, null);
+    public PagePerfFirefoxDriver(String testId, String pagePerfServer) {
+        this(testId, pagePerfServer, null);
     }
 
-    public PagePerfFirefoxDriver(String testId, FirefoxBinary binary) {
+    public PagePerfFirefoxDriver(String testId, String pagePerfServer, FirefoxBinary binary) {
         super(binary, makeProfile());
         this.testId = testId;
+        this.pagePerfServer = pagePerfServer;
     }
 
     @Override
@@ -65,6 +67,6 @@ public class PagePerfFirefoxDriver extends FirefoxDriver {
         super.close();
 
         File logDir = new File(profile.getProfileDir(), "firebug/netexport/logs");
-        Reporter.process(testId, logDir);
+        Reporter.process(testId, pagePerfServer, logDir);
     }
 }

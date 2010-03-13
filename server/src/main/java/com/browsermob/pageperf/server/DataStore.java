@@ -40,6 +40,7 @@ public class DataStore {
             String schema = IOUtils.readFully(getClass().getResourceAsStream("/schema.sql"));
             SQLUtil.runScript(schema, conn);
         } catch (SQLException e) {
+            e.printStackTrace();
             // this is OK, it's expected
         } catch (IOException e) {
             e.printStackTrace();

@@ -38,7 +38,7 @@ public class Session {
                 start = page.getStart();
             }
 
-            if (page.getStart().after(start)) {
+            if (page.getStart().before(start)) {
                 start = page.getStart();
             }
 
