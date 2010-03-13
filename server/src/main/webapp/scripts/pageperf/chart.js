@@ -5,9 +5,9 @@
     function PagePerfTestChart(testId) {
         var that = this;
 
-        var RESOLUTION_HOUR   = 'h',
-            RESOLUTION_DAY    = 'd',
-            RESOLUTION_NONE   = 'n';
+        var RESOLUTION_HOUR   = 'HOUR',
+            RESOLUTION_DAY    = 'DAY',
+            RESOLUTION_NONE   = 'NONE';
 
         var WINDOWS     = [
             {id: 0, label: "1 hour", resolution: RESOLUTION_NONE, delta: 1000 * 60 * 60},
@@ -152,7 +152,11 @@
                 url: "/query",
                 data: {
                     testId: testId,
-                    type: 'SESSION'
+                    type: 'RESPONSE_TIME',
+                    rollup: resolution,
+                    timeZoneOffset: new Date().getTimezoneOffset(),
+                    start: from.getTime(),
+                    end: to.getTime()
                 },
                 dataType: "json",
                 success: callback
@@ -169,7 +173,7 @@
 
             $('#mainChartViewLevel').html(from.toLocaleString() + " &mdash; " + to.toLocaleString());
 
-            if(typeof results.results == "undefined" || isEmpty(results.results)) {
+            if(!results) {
                 that.clear();
                 $("#noResults").fadeIn(500);
                 return;
@@ -177,20 +181,21 @@
             $("#noResults").hide();
 
             var respTimes = new Array();
-            for (var i in results.results) {
-                var tx = results.results[i];
 
-                var txTime = tx.date.getTime();
-                if((txTime >= fromTime) && (txTime <= toTime)) {
+            for (var i in results) {
+                var tx = results[i];
+
+                console.log(tx);
+
+                if((tx.date >= fromTime) && (tx.date <= toTime)) {
                     if(tx.responseTime > max) max = tx.responseTime;
                     if(tx.responseTime < min) min = tx.responseTime;
                 }
 
-                respTimes.push([tx.date.getTime(), tx.responseTime, tx]);
+                respTimes.push([tx.date, tx.responseTime, tx]);
             }
 
             data.push({
-                label: "test",
                 lines: {show: true, lineWidth: lineWidth},
                 points: {show: true, lineWidth: 5, radius: lineWidth},
                 data: respTimes
@@ -212,8 +217,8 @@
 
                 var tx = item.series.data[item.dataIndex][2];
 
-                var content = "<strong>" + item.series.label + "</strong><br />";
-                var start = tx.date;
+                var content = "";
+                var start = new Date(tx.date);
 
                 content += "<strong>Date</strong>: " + formatDate(start, "%b %d %H:%M");
                 content += "<br/>";
