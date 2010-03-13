@@ -266,13 +266,13 @@
 
             var tx = item.series.data[item.dataIndex][2];
             if(RESOLUTION_NONE == that.currentRange.resolution) {
-                var txId =  objectMd5 ? tx.transactionId : tx.id;
-                if (tx.id) window.location.href = "/monitoring-v2/tx/" + testId + "/" + txId;
+                var sessionId =  tx.id;
+                if (tx.id) window.location.href = "/session/" + sessionId;
             } else if(RESOLUTION_HOUR == that.currentRange.resolution) {
-                var from = new Date(tx.date.getTime() - WINDOWS[1].delta/2);
+                var from = new Date(tx.date - WINDOWS[1].delta/2);
                 that.chooseWindow(1, from);
             } else if(RESOLUTION_DAY == that.currentRange.resolution) {
-                var from = new Date(tx.date.getTime() - WINDOWS[2].delta/2);
+                var from = new Date(tx.date - WINDOWS[2].delta/2);
                 that.chooseWindow(2, from);
             }
         });
