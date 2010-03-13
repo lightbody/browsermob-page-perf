@@ -11,7 +11,11 @@
                 url: "/query",
                 data: {
                     testId: '${requestScope.testId}',
-                    type: 'SESSION'
+                    type: 'RESPONSE_TIME',
+                    rollup: 'NONE',
+                    timeZone: 'PST',
+                    start: new Date(1200000000000).getTime(),
+                    end: new Date(1268443035952).getTime()
                 },
                 dataType: "json",
                 success: function(data) {
