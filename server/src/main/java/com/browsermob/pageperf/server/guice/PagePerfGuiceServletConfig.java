@@ -1,9 +1,6 @@
 package com.browsermob.pageperf.server.guice;
 
-import com.browsermob.pageperf.server.servlet.ChartServlet;
-import com.browsermob.pageperf.server.servlet.HarServlet;
-import com.browsermob.pageperf.server.servlet.SessionServlet;
-import com.browsermob.pageperf.server.servlet.TestsServlet;
+import com.browsermob.pageperf.server.servlet.*;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
@@ -26,6 +23,7 @@ public class PagePerfGuiceServletConfig extends GuiceServletContextListener {
                 serve("/tests", "/tests/*").with(TestsServlet.class);
                 serve("/chart").with(ChartServlet.class);
                 serve("/session/*").with(SessionServlet.class);
+                serve("/query").with(QueryServlet.class);
             }
         }, new PagePerfModule());
     }

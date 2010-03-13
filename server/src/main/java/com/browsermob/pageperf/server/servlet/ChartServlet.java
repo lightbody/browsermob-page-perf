@@ -42,7 +42,7 @@ public class ChartServlet extends HttpServlet {
         Calendar end = Calendar.getInstance(timeZone);
         end.setTime(new Date(Long.parseLong(req.getParameter("end"))));
 
-        List<? extends AbstractEntry> entries = dataStore.querySession(type.getMetric(), testId, start, end, rollup);
+        List<? extends AbstractEntry> entries = dataStore.getChartData(type.getMetric(), testId, start, end, rollup);
 
         objectMapper.writeValue(resp.getOutputStream(), entries);
     }

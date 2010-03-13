@@ -152,7 +152,7 @@
                 url: "/chart",
                 data: {
                     testId: testId,
-                     type: 'RESPONSE_TIME',
+                    type: 'RESPONSE_TIME',
                     rollup: resolution,
                     timeZoneOffset: new Date().getTimezoneOffset(),
                     start: from.getTime(),

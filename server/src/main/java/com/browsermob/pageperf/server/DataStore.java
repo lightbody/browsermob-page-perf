@@ -6,21 +6,18 @@ import com.browsermob.pageperf.util.IOUtils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.servlet.ServletOutputStream;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.*;
-import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Singleton
 public class DataStore {
@@ -170,7 +167,7 @@ public class DataStore {
         return ids;
     }
 
-    public <T extends AbstractEntry> List<? extends AbstractEntry> querySession(Metric<T> metric, String testId, Calendar start, Calendar end, Rollup rollup) {
+    public <T extends AbstractEntry> List<? extends AbstractEntry> getChartData(Metric<T> metric, String testId, Calendar start, Calendar end, Rollup rollup) {
         String sql = metric.sql(rollup);
 
         switch (rollup) {
@@ -212,5 +209,42 @@ public class DataStore {
         } finally {
             SQLUtil.close(conn, ps, rs);
         }
+    }
+
+    public QueryResult query(String query) {
+        List<String> columns = new ArrayList<String>();
+        List<List<String>> rows = new ArrayList<List<String>>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = dataSource.getConnection();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            ResultSetMetaData md = rs.getMetaData();
+            int len = md.getColumnCount();
+            for (int i = 1; i <= len; i++) {
+                columns.add(md.getColumnLabel(i));
+            }
+
+            while (rs.next()) {
+                ArrayList<String> row = new ArrayList<String>();
+                for (int i = 1; i <= len; i++) {
+                    String s = rs.getString(i);
+                    if (s == null) {
+                        s = "";
+                    }
+                    row.add(s);
+                }
+                rows.add(row);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            SQLUtil.close(conn, ps, rs);
+        }
+
+        return new QueryResult(columns, rows);
     }
 }
