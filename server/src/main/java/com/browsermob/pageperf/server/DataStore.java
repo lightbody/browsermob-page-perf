@@ -164,19 +164,21 @@ public class DataStore {
         return ids;
     }
 
-    public List<SessionQueryResult> querySession(String testId) {
-        List<SessionQueryResult> results = new ArrayList<SessionQueryResult>();
+    public List<ResponseTimeEntry> querySession(String testId) {
+        List<ResponseTimeEntry> results = new ArrayList<ResponseTimeEntry>();
 
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = dataSource.getConnection();
-            ps = conn.prepareStatement("SELECT session_id, time_active FROM session WHERE test_id = ?");
+            ps = conn.prepareStatement("SELECT session_id, start_time, time_active FROM session WHERE test_id = ?");
             ps.setString(1, testId);
             rs = ps.executeQuery();
             while (rs.next()) {
-                results.add(new SessionQueryResult(rs.getLong(1), rs.getLong(2)));
+                ResponseTimeEntry entry = new ResponseTimeEntry(rs.getTimestamp("start_time"), rs.getLong("time_active"));
+                entry.setId(rs.getLong("session_id"));
+                results.add(entry);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
