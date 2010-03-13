@@ -34,7 +34,10 @@ public class QueryServlet extends HttpServlet {
         String testId = req.getParameter("testId");
         QueryType type = QueryType.valueOf(req.getParameter("type"));
         Rollup rollup = Rollup.valueOf(req.getParameter("rollup"));
-        TimeZone timeZone = TimeZone.getTimeZone(req.getParameter("timeZone"));
+
+        int jsOffset = Integer.parseInt(req.getParameter("timeZoneOffset"));
+        TimeZone timeZone = TimeZone.getTimeZone(TimeZone.getAvailableIDs(-60 * 1000 * jsOffset)[0]);
+
         Calendar start = Calendar.getInstance(timeZone);
         start.setTime(new Date(Long.parseLong(req.getParameter("start"))));
         Calendar end = Calendar.getInstance(timeZone);
