@@ -2,6 +2,7 @@ package com.browsermob.pageperf.server;
 
 import com.browsermob.pageperf.server.util.DateParser;
 import com.browsermob.pageperf.util.IOUtils;
+import com.browsermob.pageperf.util.URLUtils;
 import org.codehaus.jackson.JsonNode;
 import org.json.JSONException;
 
@@ -41,7 +42,7 @@ public class Entry {
         URL urlObj = new URL(url);
         protocol = urlObj.getProtocol();
         host = urlObj.getHost();
-        domain = host; // todo
+        domain = URLUtils.getDomain(host);
         path = urlObj.getPath();
 
         try {

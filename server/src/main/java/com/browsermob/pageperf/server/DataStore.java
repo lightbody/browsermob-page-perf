@@ -62,7 +62,7 @@ public class DataStore {
                 sessionId = SQLUtil.insert(conn, "INSERT INTO session (bytes, end_time, obj_count, start_time, " +
                         "page_count, time_active, test_id)",
                         session.getBytes(), new Timestamp(session.getStart().getTime()), session.getObjectCount(),
-                        new Timestamp(session.getStart().getTime()), session.getPages().size(), 1000, testId
+                        new Timestamp(session.getEnd().getTime()), session.getPages().size(), session.getTimeActive(), testId
                 );
             } else {
                 PreparedStatement ps = null;
@@ -86,9 +86,9 @@ public class DataStore {
             for (Page page : session.getPages()) {
                 long pageId = SQLUtil.insert(conn, "INSERT INTO page (bytes, obj_count, page, time_active, " +
                         "on_content_load, on_load, end_time, start_time, title, session_id, test_id)",
-                        page.getBytes(), page.getEntries().size(), i, 0, page.getOnContentLoad(),
+                        page.getBytes(), page.getEntries().size(), i, page.getTimeActive(), page.getOnContentLoad(),
                         page.getOnLoad(), new Timestamp(page.getStart().getTime()),
-                        new Timestamp(page.getStart().getTime()), page.getTitle(), sessionId, testId);
+                        new Timestamp(page.getEnd().getTime()), page.getTitle(), sessionId, testId);
 
                 int j = 1;
                 for (Entry entry : page.getEntries()) {
@@ -109,8 +109,14 @@ public class DataStore {
             }
 
             // update the session in case this was part of a larger session
-            SQLUtil.execute("UPDATE session SET bytes = " + session.getBytes() + ", obj_count = " + session.getObjectCount() + " WHERE session_id = " + sessionId, conn);
-
+            PreparedStatement ps = conn.prepareStatement("UPDATE session SET bytes = ?, obj_count = ?, time_active = ?, start_time = ?, end_time = ? WHERE session_id = ?");
+            ps.setInt(1, session.getBytes());
+            ps.setInt(2, session.getObjectCount());
+            ps.setLong(3, session.getTimeActive());
+            ps.setTimestamp(4, new Timestamp(session.getStart().getTime()));
+            ps.setTimestamp(5, new Timestamp(session.getEnd().getTime()));
+            ps.setLong(6, sessionId);
+            ps.executeUpdate();
         } finally {
             SQLUtil.close(conn);
         }

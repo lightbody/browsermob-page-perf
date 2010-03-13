@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class Session {
     private Date start;
+    private Date end;
+    private long timeActive;
     private int bytes;
     private int objectCount;
     private Map<String, Page> pages = new HashMap<String, Page>();
@@ -40,15 +42,34 @@ public class Session {
                 start = page.getStart();
             }
 
+            if (end == null) {
+                end = page.getEnd();
+            }
+
+            if (page.getEnd().after(end)) {
+                end = page.getEnd();
+            }
+
             bytes += page.getBytes();
             objectCount += page.getEntries().size();
         }
 
+        timeActive = end.getTime() - start.getTime();
     }
 
     public void update(ResultSet rs) throws SQLException {
         bytes += rs.getInt("bytes");
         objectCount += rs.getInt("obj_count");
+
+        Date oldStart = rs.getTimestamp("start_time");
+        if (oldStart.before(start)) {
+            start = oldStart;
+        }
+        Date oldEnd = rs.getTimestamp("end_time");
+        if (oldEnd.after(end)) {
+            end = oldEnd;
+        }
+        timeActive = end.getTime() - start.getTime();
     }
 
     public Collection<Page> getPages() {
@@ -65,5 +86,13 @@ public class Session {
 
     public Date getStart() {
         return start;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public long getTimeActive() {
+        return timeActive;
     }
 }

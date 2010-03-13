@@ -14,6 +14,8 @@ public class Page {
     private long onContentLoad;
     private long onLoad;
     private Date start;
+    private Date end;
+    private long timeActive;
     private int bytes;
     private List<Entry> entries = new ArrayList<Entry>();
 
@@ -28,6 +30,13 @@ public class Page {
     public void addEntry(Entry entry) {
         entries.add(entry);
         bytes += entry.getBytes();
+
+        if (end == null) {
+            end = entry.getEnd();
+        } else if (end.before(entry.getEnd())) {
+            end = entry.getEnd();
+            timeActive = end.getTime() - start.getTime();
+        }
     }
 
     public String getTitle() {
@@ -44,6 +53,14 @@ public class Page {
 
     public Date getStart() {
         return start;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public long getTimeActive() {
+        return timeActive;
     }
 
     public List<Entry> getEntries() {
