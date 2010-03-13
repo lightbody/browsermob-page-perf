@@ -2,7 +2,6 @@ package com.browsermob.pageperf.server.servlet;
 
 import com.browsermob.pageperf.server.AbstractEntry;
 import com.browsermob.pageperf.server.DataStore;
-import com.browsermob.pageperf.server.Metric;
 import com.browsermob.pageperf.server.Rollup;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,12 +18,12 @@ import java.util.List;
 import java.util.TimeZone;
 
 @Singleton
-public class QueryServlet extends HttpServlet {
+public class ChartServlet extends HttpServlet {
     private DataStore dataStore;
     private ObjectMapper objectMapper;
 
     @Inject
-    public QueryServlet(DataStore dataStore, ObjectMapper objectMapper) {
+    public ChartServlet(DataStore dataStore, ObjectMapper objectMapper) {
         this.dataStore = dataStore;
         this.objectMapper = objectMapper;
     }
@@ -32,7 +31,7 @@ public class QueryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String testId = req.getParameter("testId");
-        QueryType type = QueryType.valueOf(req.getParameter("type"));
+        ChartType type = ChartType.valueOf(req.getParameter("type"));
         Rollup rollup = Rollup.valueOf(req.getParameter("rollup"));
 
         int jsOffset = Integer.parseInt(req.getParameter("timeZoneOffset"));
