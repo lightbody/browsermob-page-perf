@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Singleton
 public class DataStore {
@@ -164,28 +163,47 @@ public class DataStore {
         return ids;
     }
 
-    public List<ResponseTimeEntry> querySession(String testId) {
-        List<ResponseTimeEntry> results = new ArrayList<ResponseTimeEntry>();
+    public <T extends AbstractEntry> List<? extends AbstractEntry> querySession(Metric<T> metric, String testId, Calendar start, Calendar end, Rollup rollup) {
+        String sql = metric.sql(rollup);
+
+        switch (rollup) {
+            case NONE:
+                start.add(Calendar.MINUTE, -60);
+                end.add(Calendar.MINUTE, 60);
+                break;
+            case HOUR:
+                start.add(Calendar.HOUR, -1);
+                end.add(Calendar.HOUR, 1);
+                break;
+            case DAY:
+                start.add(Calendar.HOUR, -24);
+                end.add(Calendar.HOUR, 24);
+                break;
+        }
 
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             conn = dataSource.getConnection();
-            ps = conn.prepareStatement("SELECT session_id, start_time, time_active FROM session WHERE test_id = ?");
+            ps = conn.prepareStatement(sql);
             ps.setString(1, testId);
+            ps.setTimestamp(2, new Timestamp(start.getTime().getTime()), start);
+            ps.setTimestamp(3, new Timestamp(end.getTime().getTime()), end);
+
             rs = ps.executeQuery();
+
+            List<T> results = new ArrayList<T>();
             while (rs.next()) {
-                ResponseTimeEntry entry = new ResponseTimeEntry(rs.getTimestamp("start_time"), rs.getLong("time_active"));
-                entry.setId(rs.getLong("session_id"));
-                results.add(entry);
+                T t = metric.parse(rs, rollup, start.getTimeZone());
+                results.add(t);
             }
+
+            return results;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
             SQLUtil.close(conn, ps, rs);
         }
-
-        return results;
     }
 }
