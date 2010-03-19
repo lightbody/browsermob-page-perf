@@ -4,7 +4,8 @@ import com.browsermob.pageperf.server.AbstractEntry;
 import com.browsermob.pageperf.server.Metric;
 
 public enum ChartType {
-    RESPONSE_TIME(Metric.ResponseTime);
+    RESPONSE_TIME(Metric.ResponseTime),
+    OBJECT_RESPONSE_TIME(Metric.ObjectResponseTime);
 
     private Metric<? extends AbstractEntry> metric;
 
