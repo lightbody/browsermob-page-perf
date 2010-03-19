@@ -14,7 +14,7 @@ public class ObjectResponseTimeMetric implements Metric<ObjectResponseTimeEntry>
     public String sql(Rollup rollup) {
         switch (rollup) {
             case NONE:
-                return "SELECT session_id, time_active, start_time FROM object WHERE test_id = ? AND start_time BETWEEN ? AND ? ORDER BY start_time AND partial_url_md5 = ? DESC";
+                return "SELECT session_id, time_active, start_time FROM object WHERE test_id = ? AND start_time BETWEEN ? AND ? AND partial_url_md5 = ? ORDER BY start_time DESC";
             case DAY:
                 return "SELECT YEAR(start_time) as year, MONTH(start_time) as month, DAY(start_time) as day, 0                as hour, AVG(time_active) as time_active, MIN(time_active) as min, MAX(time_active) as max FROM object WHERE test_id = ? AND start_time BETWEEN ? AND ? AND partial_url_md5 = ? GROUP BY YEAR(start_time),MONTH(start_time),DAY(start_time) ORDER BY YEAR(start_time) DESC, MONTH(start_time) DESC, DAY(start_time) DESC";
             case HOUR:

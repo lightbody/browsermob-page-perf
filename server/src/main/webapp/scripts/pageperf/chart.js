@@ -2,8 +2,9 @@
     /**
      *  Main Test Chart
      */
-    function PagePerfTestChart(testId) {
+    function PagePerfTestChart(testId, md5) {
         var that = this;
+        this.md5 = md5;
 
         var RESOLUTION_HOUR   = 'HOUR',
             RESOLUTION_DAY    = 'DAY',
@@ -147,17 +148,28 @@
                 }
             };
 
+            var type = 'RESPONSE_TIME';
+            if (that.md5) {
+                type = 'OBJECT_RESPONSE_TIME';
+            }
+
+            var data = {
+                testId: testId,
+                type: type,
+                rollup: resolution,
+                timeZoneOffset: new Date().getTimezoneOffset(),
+                start: from.getTime(),
+                end: to.getTime()
+            };
+
+            if (that.md5) {
+                data['arg1'] = that.md5;
+            }
+
             $.ajax({
                 type: "GET",
                 url: "/chart",
-                data: {
-                    testId: testId,
-                    type: 'RESPONSE_TIME',
-                    rollup: resolution,
-                    timeZoneOffset: new Date().getTimezoneOffset(),
-                    start: from.getTime(),
-                    end: to.getTime()
-                },
+                data: data,
                 dataType: "json",
                 success: callback
             });
@@ -304,7 +316,7 @@
         });
     }
 
-    $.chart = function(testId) {
-        return new PagePerfTestChart(testId);
+    $.chart = function(testId, md5) {
+        return new PagePerfTestChart(testId, md5);
     };
 })(jQuery);
