@@ -12,10 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 @Singleton
 public class ChartServlet extends HttpServlet {
@@ -33,6 +30,17 @@ public class ChartServlet extends HttpServlet {
         String testId = req.getParameter("testId");
         ChartType type = ChartType.valueOf(req.getParameter("type"));
         Rollup rollup = Rollup.valueOf(req.getParameter("rollup"));
+        List<String> args = new ArrayList<String>();
+        int i = 1;
+        while (true) {
+            String arg = req.getParameter("arg" + i);
+            if (arg == null) {
+                break;
+            }
+
+            args.add(arg);
+            i++;
+        }
 
         int jsOffset = Integer.parseInt(req.getParameter("timeZoneOffset"));
         TimeZone timeZone = TimeZone.getTimeZone(TimeZone.getAvailableIDs(-60 * 1000 * jsOffset)[0]);
@@ -42,7 +50,7 @@ public class ChartServlet extends HttpServlet {
         Calendar end = Calendar.getInstance(timeZone);
         end.setTime(new Date(Long.parseLong(req.getParameter("end"))));
 
-        List<? extends AbstractEntry> entries = dataStore.getChartData(type.getMetric(), testId, start, end, rollup);
+        List<? extends AbstractEntry> entries = dataStore.getChartData(type.getMetric(), testId, start, end, rollup, args);
 
         objectMapper.writeValue(resp.getOutputStream(), entries);
     }

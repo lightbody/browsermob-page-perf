@@ -167,7 +167,7 @@ public class DataStore {
         return ids;
     }
 
-    public <T extends AbstractEntry> List<? extends AbstractEntry> getChartData(Metric<T> metric, String testId, Calendar start, Calendar end, Rollup rollup) {
+    public <T extends AbstractEntry> List<? extends AbstractEntry> getChartData(Metric<T> metric, String testId, Calendar start, Calendar end, Rollup rollup, List<String> args) {
         String sql = metric.sql(rollup);
 
         switch (rollup) {
@@ -194,6 +194,11 @@ public class DataStore {
             ps.setString(1, testId);
             ps.setTimestamp(2, new Timestamp(start.getTime().getTime()), start);
             ps.setTimestamp(3, new Timestamp(end.getTime().getTime()), end);
+            int i = 4;
+            for (String arg : args) {
+                ps.setString(i, arg);
+                i++;
+            }
 
             rs = ps.executeQuery();
 

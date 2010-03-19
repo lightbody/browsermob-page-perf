@@ -28,8 +28,18 @@ public class TestsServlet extends HttpServlet {
             req.setAttribute("testIds", testIds);
             req.getRequestDispatcher("/WEB-INF/jsp/testList.jsp").include(req, resp);
         } else {
-            req.setAttribute("testId", pathInfo.substring(1));
-            req.getRequestDispatcher("/WEB-INF/jsp/viewTest.jsp").include(req, resp);
+            String path = pathInfo.substring(1);
+            int slash = path.indexOf('/');
+            if (slash == -1) {
+                req.setAttribute("testId", path);
+                req.getRequestDispatcher("/WEB-INF/jsp/viewTest.jsp").include(req, resp);
+            } else {
+                String testId = path.substring(0, slash);
+                String md5 = path.substring(slash + 1);
+                req.setAttribute("testId", testId);
+                req.setAttribute("md5", md5);
+                req.getRequestDispatcher("/WEB-INF/jsp/viewObject.jsp").include(req, resp);
+            }
         }
     }
 }

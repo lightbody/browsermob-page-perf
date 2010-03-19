@@ -6,6 +6,7 @@ import java.util.TimeZone;
 
 public interface Metric<T extends AbstractEntry> {
     public final static ResponseTimeMetric ResponseTime = new ResponseTimeMetric();
+    public final static ObjectResponseTimeMetric ObjectResponseTime = new ObjectResponseTimeMetric();
 
     public String sql(Rollup rollup);
 
