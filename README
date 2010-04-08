@@ -1,0 +1,1 @@
+To build, copy settings.xml to ~/.m2/settings.xml and then run "mvn"
