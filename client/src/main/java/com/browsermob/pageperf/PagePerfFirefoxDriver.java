@@ -1,6 +1,5 @@
 package com.browsermob.pageperf;
 
-import org.openqa.selenium.firefox.ExtensionConnection;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -9,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class PagePerfFirefoxDriver extends FirefoxDriver {
-    private FirefoxProfile profile;
     private String testId;
     private String pagePerfServer;
 
@@ -18,19 +16,16 @@ public class PagePerfFirefoxDriver extends FirefoxDriver {
     }
 
     public PagePerfFirefoxDriver(String testId, String pagePerfServer, FirefoxBinary binary) {
-        super(binary, makeProfile());
+        super(binary, tweakProfile(new FirefoxProfile()));
         this.testId = testId;
         this.pagePerfServer = pagePerfServer;
     }
 
-    @Override
-    protected ExtensionConnection connectTo(FirefoxBinary binary, FirefoxProfile profile, String host) {
-        this.profile = profile;
-        return super.connectTo(binary, profile, host);
+    public PagePerfFirefoxDriver(FirefoxProfile profile) {
+        super(tweakProfile(profile));
     }
 
-    private static FirefoxProfile makeProfile() {
-        FirefoxProfile profile = new FirefoxProfile();
+    private static FirefoxProfile tweakProfile(FirefoxProfile profile) {
         try {
             profile.addExtension(FirefoxProfile.class, "firebug-1.6X.0a7.xpi");
             profile.addExtension(FirefoxProfile.class, "netExport-0.7b13-mob.xpi");
