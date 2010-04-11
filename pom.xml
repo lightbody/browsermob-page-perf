@@ -15,6 +15,7 @@
         <module>client</module>
         <module>server</module>
         <module>common</module>
+        <module>release</module>
     </modules>
 
     <build>

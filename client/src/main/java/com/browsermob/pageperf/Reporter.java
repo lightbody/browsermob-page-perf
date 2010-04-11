@@ -41,6 +41,8 @@ public class Reporter {
             }
         });
 
+        LOG.info("Going to process " + files.length + " files:");
+
         // list out the files!
         long sessionId = -1;
         for (File file : files) {

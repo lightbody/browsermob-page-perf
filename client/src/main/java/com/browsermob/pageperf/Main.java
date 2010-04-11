@@ -10,27 +10,33 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         while(true) {
-            FirefoxDriver driver = new PagePerfFirefoxDriver("google4", "http://localhost:8080");
+            FirefoxDriver driver = new PagePerfFirefoxDriver("TechCrunch", "http://localhost:8080");
             try {
-                driver.get("http://google.com");
-                driver.findElement(By.name("q")).sendKeys("Selenium");
-                driver.findElement(By.name("btnG")).click();
+                driver.get("http://techcrunch.com/");
+                sleep();
 
-                WebDriverWait wait = new WebDriverWait(driver, 30);
-                WebElement element = wait.until(new ExpectedCondition<WebElement>() {
-                    @Override
-                    public WebElement apply(WebDriver webDriver) {
-                        return webDriver.findElement(By.xpath("//a[@class = 'l' and @href = 'http://seleniumhq.org/']"));
-                    }
-                });
+                driver.get("http://techcrunch.com/2010/03/19/google-speed-search-more/");
+                sleep();
+
+                driver.findElementByLinkText("Enterprise").click();
+                sleep();
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 driver.close();
             }
 
-            //Thread.sleep(30000);
+            Thread.sleep(30000);
         }
 
+    }
+
+    private static void sleep() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

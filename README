@@ -1,1 +1,5 @@
 To build, copy settings.xml to ~/.m2/settings.xml and then run "mvn"
+
+Once done, find the zip file in release/target and unzip it. That
+is the full release of this project and includes additional
+instructions on how to run the project.
