@@ -1,3 +1,5 @@
+This project requires Maven 2.2+.
+
 To build, copy settings.xml to ~/.m2/settings.xml and then run "mvn"
 
 Once done, find the zip file in release/target and unzip it. That
